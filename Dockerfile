@@ -2,10 +2,12 @@
 # Build Image
 #
 
-FROM alpine:latest as builder
+FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:408.0.0-alpine as builder
 
 # Add the git repo
 ADD . /git/mapcrafter
+
+RUN apk update
 
 # Dependencies needed for building Mapcrafter
 # (not sure how many of these are actually needed)
@@ -17,6 +19,8 @@ RUN apk add \
         zlib-dev \
         libpng-dev \
         libjpeg-turbo-dev \
+    	# Alpine 3.16 Required
+        #icu-data-full \
         boost-dev
 
 # Build mapcrafter from source
@@ -27,15 +31,15 @@ RUN cd /git/mapcrafter && \
     mkdir /tmp/mapcrafter && \
     make DESTDIR=/tmp/mapcrafter install
 
-
 #
 # Final Image
 #
 
-FROM alpine:latest
+FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine
 
 # Mapcrafter, built in previous stage
 COPY --from=builder /tmp/mapcrafter/ /
+COPY map.conf .
 
 # Depedencies needed for running Mapcrafter
 RUN apk add \

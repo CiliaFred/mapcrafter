@@ -19,5 +19,8 @@ docs/_build/
 /.cmake
 /data
 tmp
-/src/data/textures
 /release
+
+.idea/
+
+*.iml

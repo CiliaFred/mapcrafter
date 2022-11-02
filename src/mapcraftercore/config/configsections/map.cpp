@@ -144,6 +144,7 @@ void MapSection::dump(std::ostream &out) const {
     out << "  png_indexed = " << png_indexed << std::endl;
     out << "  jpeg_quality = " << jpeg_quality << std::endl;
     out << "  lighting_intensity = " << lighting_intensity << std::endl;
+    out << "  water_opacity = " << water_opacity << std::endl;
     out << "  lighting_water_intensity = " << lighting_water_intensity << std::endl;
     out << "  render_biomes = " << render_biomes << std::endl;
     out << "  use_image_timestamps = " << use_image_mtimes << std::endl;
@@ -185,6 +186,8 @@ int MapSection::getJPEGQuality() const { return jpeg_quality.getValue(); }
 
 double MapSection::getLightingIntensity() const { return lighting_intensity.getValue(); }
 
+double MapSection::getWaterOpacity() const { return water_opacity.getValue(); }
+
 double MapSection::getLightingWaterIntensity() const { return lighting_water_intensity.getValue(); }
 
 bool MapSection::renderBiomes() const { return render_biomes.getValue(); }
@@ -224,6 +227,7 @@ void MapSection::preParse(const INIConfigSection &section, ValidationList &valid
     jpeg_quality.setDefault(85);
 
     lighting_intensity.setDefault(1.0);
+    water_opacity.setDefault(1.0);
     lighting_water_intensity.setDefault(0.85);
     render_biomes.setDefault(true);
     use_image_mtimes.setDefault(true);
@@ -279,6 +283,8 @@ bool MapSection::parseField(const std::string key, const std::string value,
             validation.error("'jpeg_quality' must be a number between 0 and 100!");
     } else if (key == "lighting_intensity") {
         lighting_intensity.load(key, value, validation);
+    } else if (key == "water_opacity") {
+        water_opacity.load(key, value, validation);
     } else if (key == "lighting_water_intensity") {
         lighting_water_intensity.load(key, value, validation);
     } else if (key == "render_biomes") {

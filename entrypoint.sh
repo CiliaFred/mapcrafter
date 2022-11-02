@@ -1,9 +1,16 @@
 #!/bin/sh
+mkdir /tmp/input
+mkdir /tmp/output
 
-USER_ID=${LOCAL_USER_ID:-1000}
-echo "Running as user $USER_ID"
+echo "Get inputs"
+gsutil -m -q cp -R gs://minecraft-save-2022/HelloWorld/* /tmp/input/
 
-useradd --shell /bin/sh -u $USER_ID -o -d /home/user -m user
-mkdir -p /home/user && chown -R user:user /home/user
+echo "Process map"
+/usr/local/bin/mapcrafter -c map.conf -j 8
+rm -fr /tmp/input
 
-su -c "/usr/local/bin/mapcrafter $*" user
+echo "Save map"
+gsutil -o "GSUtil:max_upload_compression_buffer_size=16G" -h "Cache-Control:no-store" -m -q cp -J -R /tmp/output/* gs://minecraft.cilia.paris/
+
+echo "Clean storage"
+rm -fr /tmp/output
